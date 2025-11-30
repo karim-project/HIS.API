@@ -152,7 +152,7 @@ namespace HIS.API.Areas.Admin.Controllers
             if (doctor == null)
                 return NotFound();
             // remove old photo
-            var oldPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\product_img", doctor.Img!);
+            var oldPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\DoctorImg", doctor.Img!);
             if (System.IO.File.Exists(oldPath))
             {
                 System.IO.File.Delete(oldPath);

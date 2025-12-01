@@ -82,9 +82,10 @@ namespace HIS.API.Areas.Admin.Controllers
         {
             var transation = _context.Database.BeginTransaction();
 
-            Doctor doctor = createDoctorRequest.Adapt<Doctor>();
+         
             try
             {
+                Doctor doctor = createDoctorRequest.Adapt<Doctor>();
                 if (createDoctorRequest.Img is not null && createDoctorRequest.Img.Length > 0)
                 {
                     var fillName = Guid.NewGuid().ToString() + Path.GetExtension(createDoctorRequest.Img.FileName);

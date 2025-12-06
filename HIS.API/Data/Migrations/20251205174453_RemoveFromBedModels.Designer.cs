@@ -4,6 +4,7 @@ using HIS.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HIS.API.Data.Migrations
 {
     [DbContext(typeof(ApplicationDBcontext))]
-    partial class ApplicationDBcontextModelSnapshot : ModelSnapshot
+    [Migration("20251205174453_RemoveFromBedModels")]
+    partial class RemoveFromBedModels
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -31,9 +34,6 @@ namespace HIS.API.Data.Migrations
                     b.Property<DateTime>("AdmitAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid?>("BedId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTime?>("DischargeAt")
                         .HasColumnType("datetime2");
 
@@ -47,8 +47,6 @@ namespace HIS.API.Data.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("BedId");
 
                     b.HasIndex("PatientId");
 
@@ -947,10 +945,6 @@ namespace HIS.API.Data.Migrations
 
             modelBuilder.Entity("HIS.API.Models.Admission", b =>
                 {
-                    b.HasOne("HIS.API.Models.Bed", "Bed")
-                        .WithMany()
-                        .HasForeignKey("BedId");
-
                     b.HasOne("HIS.API.Models.Patient", "Patient")
                         .WithMany("Admissions")
                         .HasForeignKey("PatientId")
@@ -960,8 +954,6 @@ namespace HIS.API.Data.Migrations
                     b.HasOne("HIS.API.Models.Room", "Room")
                         .WithMany()
                         .HasForeignKey("RoomId");
-
-                    b.Navigation("Bed");
 
                     b.Navigation("Patient");
 

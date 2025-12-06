@@ -4,6 +4,7 @@ using HIS.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HIS.API.Data.Migrations
 {
     [DbContext(typeof(ApplicationDBcontext))]
-    partial class ApplicationDBcontextModelSnapshot : ModelSnapshot
+    [Migration("20251205110554_DropEmployeeNumberFromDoctor")]
+    partial class DropEmployeeNumberFromDoctor
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -31,9 +34,6 @@ namespace HIS.API.Data.Migrations
                     b.Property<DateTime>("AdmitAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid?>("BedId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTime?>("DischargeAt")
                         .HasColumnType("datetime2");
 
@@ -47,8 +47,6 @@ namespace HIS.API.Data.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("BedId");
 
                     b.HasIndex("PatientId");
 
@@ -262,6 +260,9 @@ namespace HIS.API.Data.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<Guid?>("CurrentAdmissionId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<bool>("IsOccupied")
                         .HasColumnType("bit");
 
@@ -269,6 +270,8 @@ namespace HIS.API.Data.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CurrentAdmissionId");
 
                     b.HasIndex("RoomId");
 
@@ -325,17 +328,12 @@ namespace HIS.API.Data.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
-                    b.Property<Guid?>("SpecialtyId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
                     b.HasIndex("DepartmentId");
-
-                    b.HasIndex("SpecialtyId");
 
                     b.ToTable("Doctors", (string)null);
                 });
@@ -699,20 +697,15 @@ namespace HIS.API.Data.Migrations
                     b.Property<int>("Capacity")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("DepartmentId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("FloorNumber")
-                        .HasColumnType("int");
-
                     b.Property<string>("Number")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.HasKey("Id");
+                    b.Property<string>("Ward")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.HasIndex("DepartmentId");
+                    b.HasKey("Id");
 
                     b.ToTable("Rooms", (string)null);
                 });
@@ -947,10 +940,6 @@ namespace HIS.API.Data.Migrations
 
             modelBuilder.Entity("HIS.API.Models.Admission", b =>
                 {
-                    b.HasOne("HIS.API.Models.Bed", "Bed")
-                        .WithMany()
-                        .HasForeignKey("BedId");
-
                     b.HasOne("HIS.API.Models.Patient", "Patient")
                         .WithMany("Admissions")
                         .HasForeignKey("PatientId")
@@ -960,8 +949,6 @@ namespace HIS.API.Data.Migrations
                     b.HasOne("HIS.API.Models.Room", "Room")
                         .WithMany()
                         .HasForeignKey("RoomId");
-
-                    b.Navigation("Bed");
 
                     b.Navigation("Patient");
 
@@ -1024,11 +1011,18 @@ namespace HIS.API.Data.Migrations
 
             modelBuilder.Entity("HIS.API.Models.Bed", b =>
                 {
+                    b.HasOne("HIS.API.Models.Admission", "CurrentAdmission")
+                        .WithMany()
+                        .HasForeignKey("CurrentAdmissionId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.HasOne("HIS.API.Models.Room", "Room")
                         .WithMany("Beds")
                         .HasForeignKey("RoomId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("CurrentAdmission");
 
                     b.Navigation("Room");
                 });
@@ -1040,13 +1034,7 @@ namespace HIS.API.Data.Migrations
                         .HasForeignKey("DepartmentId")
                         .OnDelete(DeleteBehavior.SetNull);
 
-                    b.HasOne("HIS.API.Models.Specialty", "Specialty")
-                        .WithMany()
-                        .HasForeignKey("SpecialtyId");
-
                     b.Navigation("Department");
-
-                    b.Navigation("Specialty");
                 });
 
             modelBuilder.Entity("HIS.API.Models.DoctorSpecialty", b =>
@@ -1177,17 +1165,6 @@ namespace HIS.API.Data.Migrations
                     b.Navigation("Medication");
 
                     b.Navigation("Prescription");
-                });
-
-            modelBuilder.Entity("HIS.API.Models.Room", b =>
-                {
-                    b.HasOne("HIS.API.Models.Department", "Department")
-                        .WithMany()
-                        .HasForeignKey("DepartmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Department");
                 });
 
             modelBuilder.Entity("HIS.API.Models.Visit", b =>

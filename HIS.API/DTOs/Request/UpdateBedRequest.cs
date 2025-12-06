@@ -1,13 +1,9 @@
-﻿namespace HIS.API.Models
+﻿namespace HIS.API.DTOs.Request
 {
-    public class Bed
+    public class UpdateBedRequest
     {
-        public Guid Id { get; set; }
         public string BedNumber { get; set; } = default!;
         public Guid RoomId { get; set; }
-
-        public Room Room { get; set; } = default!;
         public bool IsOccupied { get; set; }
-      
     }
 }

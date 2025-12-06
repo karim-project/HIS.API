@@ -19,10 +19,7 @@ namespace HIS.API.Data.EntityConfigurations
             .OnDelete(DeleteBehavior.Cascade);
 
 
-            builder.HasOne(b => b.CurrentAdmission)
-            .WithMany()
-            .HasForeignKey(b => b.CurrentAdmissionId)
-            .OnDelete(DeleteBehavior.SetNull);
+          
         }
     }
 }

@@ -11,7 +11,7 @@ namespace HIS.API.Data.EntityConfigurations
             builder.ToTable("Doctors");
             builder.HasKey(d => d.Id);
             builder.Property(d => d.FullName).IsRequired().HasMaxLength(200);
-            builder.Property(d => d.EmployeeNumber).IsRequired().HasMaxLength(50);
+            
             builder.Property(d => d.Phone).HasMaxLength(20);
             builder.Property(d => d.Email).HasMaxLength(200);
 

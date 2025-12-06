@@ -1,8 +1,10 @@
-﻿using HIS.API.Models;
+﻿using HIS.API.DTOs.Request;
+using HIS.API.Models;
 using Mapster;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using System.Threading.Tasks;
 
 namespace HIS.API.Areas.Admin.Controllers
@@ -21,10 +23,17 @@ namespace HIS.API.Areas.Admin.Controllers
             _logger = logger;
             _context = context;
         }
+
         [HttpGet]
         public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
         {
-            var doctors = await _doctorRepository.GetAsync(includes: [d => d.Department!, d => d.DoctorSpecialties], tracked: false, cancellationToken: cancellationToken);
+            var doctors = await _doctorRepository.GetAsync(
+                includes: [
+                    d => d.Department!,d=>d.Specialty!
+                ],
+                tracked: false,
+                cancellationToken: cancellationToken
+            );
 
             var response = doctors.Select(d => new DoctorResponse
             {
@@ -34,21 +43,19 @@ namespace HIS.API.Areas.Admin.Controllers
                 Phone = d!.Phone,
                 Img = d.Img,
 
-                DepartmentId = d!.DepartmentId,
-                DepartmentName = d.FullName,
+                DepartmentId = d.DepartmentId,
+                DepartmentName = d.Department!.Name,
 
                 Specialties = d.DoctorSpecialties.Select(s => new DoctorSpecialtyResponse
                 {
                     Id = s.SpecialtyId,
-                    Name = s.Specialty.Name
-
+                    Name = s.Specialty!.Name
                 }).ToList()
-
-
             });
 
             return Ok(response);
         }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetOne(Guid id , CancellationToken cancellationToken)
         {
@@ -77,7 +84,9 @@ namespace HIS.API.Areas.Admin.Controllers
 
             return Ok(response);
         }
+
         [HttpPost]
+        //[Authorize(Roles = $"{SD.Super_Admin_Role} ,{SD.Admin_Role}")]
         public async Task<IActionResult> Create([FromForm]CreateDoctorRequest createDoctorRequest , CancellationToken cancellationToken)
         {
             var transation = _context.Database.BeginTransaction();
@@ -121,7 +130,9 @@ namespace HIS.API.Areas.Admin.Controllers
             }
 
         }
+
         [HttpPut]
+        [Authorize(Roles = $"{SD.Super_Admin_Role} ,{SD.Admin_Role}")]
         public async Task<IActionResult> Edit(Guid id , [FromBody]UpdateDoctorRequest updateDoctorRequest,CancellationToken cancellationToken)
         {
             var docterInDB =await _doctorRepository.GetOneAsync(d => d.Id == id, cancellationToken: cancellationToken);
@@ -131,6 +142,23 @@ namespace HIS.API.Areas.Admin.Controllers
                 {
                 msg = "Doctor not found"
                 });
+
+            if(updateDoctorRequest.Img is not null && updateDoctorRequest.Img.Length > 0)
+            {
+                var fillName = Guid.NewGuid().ToString() + Path.GetExtension(updateDoctorRequest.Img.FileName);
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\DoctorImg", fillName);
+
+                using (var stream = System.IO.File.Create(filePath))
+                {
+                    await updateDoctorRequest.Img.CopyToAsync(stream);
+                }
+                var oldPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\DoctorImg", docterInDB.Img!);
+                if (System.IO.File.Exists(oldPath))
+                {
+                    System.IO.File.Delete(oldPath);
+                }
+                docterInDB.Img = fillName;
+            }
 
             docterInDB.FullName = updateDoctorRequest.FullName!;
             docterInDB.Email = updateDoctorRequest.Email!;

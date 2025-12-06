@@ -5,7 +5,7 @@ namespace HIS.API.Models
     public class Doctor
     {
         public Guid Id { get; set; }
-        public string EmployeeNumber { get; set; } = default!;
+       
         public string FullName { get; set; } = default!;
        
         public string? Phone { get; set; } 
@@ -22,7 +22,8 @@ namespace HIS.API.Models
 
         public Department? Department { get; set; }
 
-      
+        public Guid? SpecialtyId { get; set; }
+        public Specialty? Specialty { get; set; }
 
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }

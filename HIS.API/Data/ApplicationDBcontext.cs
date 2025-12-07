@@ -11,7 +11,6 @@ namespace HIS.API.Data
         {
         }
 
-        public DbSet<Admission> Admissions { get; set; }
         public DbSet<Appointment> Appointments { get; set; }
         public DbSet<Attachment> Attachments { get; set; }
         public DbSet<Bed> Beds { get; set; }

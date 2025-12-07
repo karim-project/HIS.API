@@ -51,12 +51,13 @@ namespace HIS.API
                 options.AccessDeniedPath = "/Identity/Account/AccessDenied"; // Default access denied path
             });
 
+
+
             builder.Services.AddTransient<IEmailSender, EmailSender>();
 
             builder.Services.AddScoped<IDBInitilizer, DBInitilizer>();
 
             builder.Services.AddScoped<IRepository<Doctor>, Repository<Doctor>>();
-            builder.Services.AddScoped<IRepository<Admission>, Repository<Admission>>();
             builder.Services.AddScoped<IRepository<Appointment>, Repository<Appointment>>();
             builder.Services.AddScoped<IRepository<Attachment>, Repository<Attachment>>();
             builder.Services.AddScoped<IRepository<Bed>, Repository<Bed>>();

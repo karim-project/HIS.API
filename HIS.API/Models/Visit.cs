@@ -22,7 +22,6 @@ namespace HIS.API.Models
         public ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
 
         public Guid? AdmissionId { get; set; }
-        public Admission? Admission { get; set; }
 
         public DateTime CraetedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }

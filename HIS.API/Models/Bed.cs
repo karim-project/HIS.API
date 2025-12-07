@@ -8,6 +8,7 @@
 
         public Room Room { get; set; } = default!;
         public bool IsOccupied { get; set; }
-      
+
+
     }
 }

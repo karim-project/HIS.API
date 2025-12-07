@@ -27,7 +27,7 @@ namespace HIS.API.Areas.Admin.Controllers
         [HttpGet("id")]
         public IActionResult GetOne(Guid id, CancellationToken cancellationToken)
         {
-            var Patient = _patientRepository.GetOneAsync(p => p.Id == id, includes: [p => p.Appointments, p => p.Admissions!, p => p.MedicalRecordNumber], tracked: false, cancellationToken: cancellationToken);
+            var Patient = _patientRepository.GetOneAsync(p => p.Id == id, includes: [p => p.Appointments, p => p.MedicalRecordNumber], tracked: false, cancellationToken: cancellationToken);
 
             if (Patient is null)
                 return NotFound();

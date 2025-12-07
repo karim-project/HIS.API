@@ -5,7 +5,6 @@ namespace HIS.API.DTOs.Request
     public class CreateAdmissionRequest
     {
         public Guid PatientId { get; set; }
-        [JsonIgnore]
         public Patient Patient { get; set; } = default!;
         public DateTime AdmitAt { get; set; }
         public DateTime? DischargeAt { get; set; }

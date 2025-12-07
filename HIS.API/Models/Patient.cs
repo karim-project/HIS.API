@@ -23,7 +23,6 @@ namespace HIS.API.Models
         public ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
         public ICollection<Insurance>? Insurances { get; set; } = new List<Insurance>();
         public ICollection<Invoice>? Invoices  { get; set; } = new List<Invoice>();
-        public ICollection<Admission>? Admissions   { get; set; } = new List<Admission>();
 
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
